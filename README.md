@@ -134,7 +134,7 @@ addModule(module, cacheGroup) {
 ```
 这里有一个needrebuild 判断是否需要重新编译（this.fileTimestamps 、this.contextTimestamps：首次或前一次编译存储的文件最后变更记录）。
 
-4.解决办法：
+### 解决办法：
 这里我发现一共有两个解决办法：
 （1）强制让loader中不使用缓存,简单粗暴
 
