@@ -136,7 +136,7 @@ addModule(module, cacheGroup) {
 
 ### 解决办法：
 ###### 这里我发现一共有两个解决办法：
-（1）强制让loader中不使用缓存,简单粗暴
+###### （1）强制让loader中不使用缓存,简单粗暴
 
 <img src="./public/5.png" width="50%">
 
@@ -145,7 +145,8 @@ addModule(module, cacheGroup) {
 
 <img src="./public/6.png" width="50%">
 
-（2）在 _babel-laoder 中用 this._module.buildInfo 保存编译过的文件（各个模块各自保存编译过的标记，当走缓存时能在plugin中读取到该标记），TestWebpackPlugin中重写 addModule 方法，保留原有逻辑判断的同时加入判断需要走缓存时（不需要重新编译的时候），手动加入缓存文件。
+###### （2）重写 addModule 方法
+在 _babel-laoder 中用 this._module.buildInfo 保存编译过的文件（各个模块各自保存编译过的标记，当走缓存时能在plugin中读取到该标记），TestWebpackPlugin中重写 addModule 方法，保留原有逻辑判断的同时加入判断需要走缓存时（不需要重新编译的时候），手动加入缓存文件。
 ```javascript
 
 const buildInfo = this._module.buildInfo
