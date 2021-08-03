@@ -135,7 +135,7 @@ addModule(module, cacheGroup) {
 这里有一个needrebuild 判断是否需要重新编译（this.fileTimestamps 、this.contextTimestamps：首次或前一次编译存储的文件最后变更记录）。
 
 ### 解决办法：
-这里我发现一共有两个解决办法：
+###### 这里我发现一共有两个解决办法：
 （1）强制让loader中不使用缓存,简单粗暴
 
 <img src="./public/5.png" width="50%">
@@ -182,5 +182,6 @@ const rawAddModule = compilation.addModule
 
 <img src="./public/10.png" width="80%">
 
-总结：只是在这个 demo 场景下，loader 中还加入了其他的处理逻辑，比如收集 modulesMap 等，所以才导致的失效。
+### 总结
+只是在这个 demo 场景下，loader 中还加入了其他的处理逻辑，比如收集 modulesMap 等，所以才导致的失效。
 根据实际情况，如果收集 modulesMap 的过程与新增或删除依赖无关，其实可以把modulesMap直接挂载到 compiler 对象上，也能避免这种情况。
