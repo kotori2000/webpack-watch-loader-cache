@@ -58,12 +58,17 @@ if (!modulesMap[this.resourcePath]) {
 > this.resourcePath资源文件的路径。
 
 处理完后会进入到 emit 钩子(这个时候已经 modulesMap 已经有了三个值)：键值都是对应的文件路径
+
 <img src="./public/1.png" width="50%">
 
 这时候改变文件内容触发下一次编译（我这里修改b.js文件）：
+
 <img src="./public/2.png" width="23%"> => <img src="./public/3.png" width="23%">
+
 只有修改的文件会再次经过_babel-loader.js的处理，再看此时modulesMap：
+
 <img src="./public/4.png" width="50%">
+
 只收集到修改过的b.js的路径。
 
 ### 问题造成原因
@@ -132,10 +137,14 @@ addModule(module, cacheGroup) {
 4.解决办法：
 这里我发现一共有两个解决办法：
 （1）强制让loader中不使用缓存,简单粗暴
+
 <img src="./public/5.png" width="50%">
+
 这样不管怎么修改所有的js文件都会经过_babel-laoder再次进行编译。
 再次场景复现进行断点调试，能看到只修改b.js文件后index.js,a.js和b.js也都再次经过_babel-laoder的处理。
+
 <img src="./public/6.png" width="50%">
+
 （2）在 _babel-laoder 中用 this._module.buildInfo 保存编译过的文件（各个模块各自保存编译过的标记，当走缓存时能在plugin中读取到该标记），TestWebpackPlugin中重写 addModule 方法，保留原有逻辑判断的同时加入判断需要走缓存时（不需要重新编译的时候），手动加入缓存文件。
 ```javascript
 
@@ -160,11 +169,18 @@ const rawAddModule = compilation.addModule
     })
 ```
 同样再进行断点调试，首次处理三个文件依次经过处理，能看到buildInfo将处理过的文件路径进行了缓存（我这里文件路径过长所以没能展示出具体文件名，依次是index.js、a.js、b.js）：
+
 <img src="./public/7.png" width="50%">
+
 当修改b.js文件后，index.js和a.js文件因为走缓存会经过这步逻辑将module中保存的标记取出。
+
 <img src="./public/8.png" width="50%">
+
 <img src="./public/9.png" width="50%">
+
 而b.js则还是经过_babel-loader.js的处理最后到emit钩子中成功输出所有模块：
+
 <img src="./public/10.png" width="80%">
+
 总结：只是在这个 demo 场景下，loader 中还加入了其他的处理逻辑，比如收集 modulesMap 等，所以才导致的失效。
 根据实际情况，如果收集 modulesMap 的过程与新增或删除依赖无关，其实可以把modulesMap直接挂载到 compiler 对象上，也能避免这种情况。
