@@ -1,4 +1,4 @@
-## watch模式下因 loader 缓存导致的问题
+## webpack的watch模式下因 loader 缓存导致的问题
 ### 问题概述
 
 一个简单的场景，需要记录项目中使用到的的页面或者组件资源，其中一个方法是将逻辑写在loader中，这样资源经过loader编译的时候可以统计到。但是在watch模式下会产生一个问题，修改完其中一个文件后，这个文件重新走loader，其他没有修改的文件不会再走loader，导致本次编译后统计的资源丢失。
@@ -134,7 +134,7 @@ addModule(module, cacheGroup) {
 ```
 这里有一个needrebuild 判断是否需要重新编译（this.fileTimestamps 、this.contextTimestamps：首次或前一次编译存储的文件最后变更记录）。
 
-### 解决办法：
+### 解决办法
 ###### 这里我发现一共有两个解决办法：
 ###### （1）强制让loader中不使用缓存,简单粗暴
 
