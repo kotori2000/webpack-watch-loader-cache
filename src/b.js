@@ -1,1 +1,1 @@
-export default 'b.js'
+export default 'this is b.js'
